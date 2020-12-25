@@ -1,0 +1,49 @@
+import express from "express";
+import morgan from "morgan";
+import helmet from "helmet";
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
+
+const app = express();
+
+//remove 2 line
+//const PORT = 4000;
+//const handleListening = () => console.log(`Listening on: http://localhost:${PORT}`);
+
+const handleHome = (req, res) => res.send('Hi from my ass!!');
+const handleProfile = (req, res) => res.send("You are on my profile");
+
+const betweenHome = (req, res, next) => {
+    console.log("dev ");
+    next();
+}
+
+// middleware, 웹페이지 띄우기 전에 처리 내용을 담는다.
+// 로그인에서 사용자 처리, IP 걸러내기 등
+// app.get("/", {middleware}, handleHome);
+// app.use 사용 가능
+
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(helmet());
+app.use(morgan("dev"));
+
+const middleware = (req, res, next) => {
+    res.send('not happening');
+    // middleware에서 send를 사용하면, 웹페이지를 띄울 수 없다.
+    // 여기에서는 handleHome을 실행할 수 없다.
+};
+
+app.use(betweenHome);
+
+app.get("/", middleware, handleHome);
+
+app.get("/profile", handleProfile);
+
+// remove
+//app.listen(PORT, handleListening);
+
+//app.get("/", function(req, res) {
+//    res.send("hello world");
+//});
